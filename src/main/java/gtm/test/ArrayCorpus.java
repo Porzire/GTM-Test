@@ -1,4 +1,4 @@
-package gtm.basic;
+package gtm.test;
 
 import java.io.BufferedReader;
 import java.io.File;

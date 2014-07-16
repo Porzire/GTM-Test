@@ -154,6 +154,27 @@
                     </configuration>
                 </plugin>
                 <plugin>
+                    <!-- Add jar to classpath. -->
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>2.4</version>
+                    <executions>
+                        <execution>
+                            <phase>initialize</phase>
+                            <goals>
+                                <goal>install-file</goal>
+                            </goals>
+                            <configuration>
+                                <groupId>org.textsim</groupId>
+                                <artifactId>daltext-GTM-core</artifactId>
+                                <version>0.1-SNAPSHOT</version>
+                                <packaging>jar</packaging>
+                                <file>${basedir}/src/main/resources/daltext-GTM-core-0.1-SNAPSHOT.jar</file>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
                     <!-- Generate javadoc. -->
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
@@ -164,6 +185,11 @@
     </build>
 
     <dependencies>
+        <dependency>
+            <groupId>org.textsim</groupId>
+            <artifactId>daltext-GTM-core</artifactId>
+            <version>0.1-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>

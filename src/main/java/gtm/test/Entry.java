@@ -1,4 +1,4 @@
-package gtm.basic;
+package gtm.test;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -55,7 +55,7 @@ public class Entry
         // Load corpus data into memory.
         Runtime runtime = Runtime.getRuntime();
         float str = (runtime.totalMemory() - runtime.freeMemory()) / MB;
-        GTM gtm = new GTM(new ArrayCorpus(new File(uniDir), new File(triDir)));
+        GTMAlgo gtm = new GTMAlgo(new ArrayCorpus(new File(uniDir), new File(triDir)));
         float end = (runtime.totalMemory() - runtime.freeMemory()) / MB;
         System.out.println("Memory used: " + (end - str) + " MB");
 

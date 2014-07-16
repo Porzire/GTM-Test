@@ -1,4 +1,5 @@
-package gtm.basic;
+package measures;
+
 
 /**
  * The basic implementation of GTM in Java.
@@ -9,14 +10,22 @@ package gtm.basic;
  * @since  1.0 (5/22/2014)
  */
 public class GTM
+        extends Measure
 {
     private static final double LOG_CONST = Math.log(1.01);
-
-    private Corpus corpus;
     
-    public GTM(Corpus corpus)
+    private Long cMax = Long.MAX_VALUE;
+
+    @Override
+    public void setConst(double... vals)
     {
-        this.corpus = corpus;
+        this.cMax = (long)vals[0];
+    }
+    
+    @Override
+    public double getConst()
+    {
+        return cMax;
     }
     
     /**
@@ -26,20 +35,16 @@ public class GTM
      * @param word2  Another word, no particular order with word1.
      * @return The similarity between two words.
      */
-    public double wordrt(String word1, String word2)
+    @Override
+    public double sim(long freq1, long freq2, long triFreq)
     {
-        long freq = this.corpus.freq(word1, word2);
-        if (freq == 0) {
-            return 0;
-        }
-        long cMax = this.corpus.cMax();
-        long freq1 = this.corpus.freq(word1);
-        long freq2 = this.corpus.freq(word2);
         long minFreq = (freq1 < freq2 ? freq1 : freq2);
-        double condition = (freq * cMax * cMax) / (freq1 * freq2 * minFreq);
+        // Force computation!
+        minFreq = (minFreq == 0 ? 1 : minFreq);
+        double condition = ((double)triFreq * cMax * cMax) / (freq1 * freq2 * minFreq);
         double denominator =  -2 * Math.log((double)minFreq / cMax);
         if (condition > 1) {
-            return condition / denominator;
+            return Math.log(condition) / denominator;
         } else {
             return LOG_CONST / denominator;
         }

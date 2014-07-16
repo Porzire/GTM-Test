@@ -1,4 +1,4 @@
-package gtm.basic;
+package gtm.test;
 
 /**
  * Google n-gram corpus for GTM.
