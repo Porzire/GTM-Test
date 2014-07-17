@@ -1,4 +1,4 @@
-package gtm.test;
+package gtm.test.approach;
 
 /**
  * Google n-gram corpus for GTM.
@@ -8,7 +8,7 @@ package gtm.test;
  * @author Jie Mei
  * @since  1.0
  */
-public interface Corpus
+public interface Approach
 {
     /**
      * Get the frequency for given gram in unigram corpus.

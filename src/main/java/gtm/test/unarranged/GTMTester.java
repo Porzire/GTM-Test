@@ -1,4 +1,4 @@
-package proposed;
+package gtm.test.unarranged;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,8 +18,9 @@ import org.textsim.wordrt.proc.WordRtProcessor;
 import gnu.trove.map.hash.TObjectIntHashMap;
 
 
+@SuppressWarnings("unused")
 public class GTMTester {
-    private static WordRtProcessor proc;
+	private static WordRtProcessor proc;
     private static TObjectIntHashMap<String> idMap;
     private static TextRtPreprocessor textpreproc;
     private static TextRtProcessor textproc;

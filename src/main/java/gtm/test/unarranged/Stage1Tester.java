@@ -1,14 +1,14 @@
-package proposed;
+package gtm.test.unarranged;
+
+import gtm.test.measure.Dice;
+import gtm.test.measure.GTM;
+import gtm.test.measure.Jaccard;
+import gtm.test.measure.Measure;
+import gtm.test.measure.NGD;
+import gtm.test.measure.PMI;
+import gtm.test.measure.Simpon;
 
 import java.io.IOException;
-
-import measures.Dice;
-import measures.GTM;
-import measures.Jaccard;
-import measures.Measure;
-import measures.NGD;
-import measures.PMI;
-import measures.Simpon;
 
 import org.textsim.exception.ProcessException;
 
@@ -34,6 +34,7 @@ public class Stage1Tester {
         // System.out.println("Input File:   " + inFile);
         // System.out.println("Output File:  " + stg1Nm);
 
+        // TODO: set correct parameter to PMI, NGD, and GTM.
         Measure sim = null;
         if (simType.equals("Jacard"))
             sim = new Jaccard();
@@ -42,11 +43,11 @@ public class Stage1Tester {
         else if (simType.equals("Dice"))
             sim = new Dice();
         else if (simType.equals("PMI"))
-            sim = new PMI();
+            sim = new PMI(0);
         else if (simType.equals("NGD"))
-            sim = new NGD();
+            sim = new NGD(0);
         else if (simType.equals("GTM"))
-            sim = new GTM();
+            sim = new GTM(0);
         runtime.gc();
         stage1Test(uniFile, triFile, inFile, stg1Nm, sim, linesToRead);
     }
@@ -66,7 +67,6 @@ public class Stage1Tester {
         AbstractStageWordSim ws = new Stage1WordSim(uniPath, triPath, sim);
         ws.loadInput(inPath, linesToRead);
 
-        System.out.println(sim.getConst());
         strtTime = System.currentTimeMillis();
         ws.runAndWrite(outPath);
         endTime = System.currentTimeMillis();

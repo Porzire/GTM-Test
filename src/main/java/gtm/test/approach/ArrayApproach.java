@@ -1,4 +1,4 @@
-package gtm.test;
+package gtm.test.approach;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -21,8 +21,8 @@ import java.util.Comparator;
  * @author Jie Mei
  * @since  1.0
  */
-public class ArrayCorpus
-        implements Corpus
+public class ArrayApproach
+        implements Approach
 {
     /**
      * The unigram data.
@@ -47,7 +47,7 @@ public class ArrayCorpus
      * @param uniDir  The unigram directory.
      * @param triDir  The trigram directory.
      */
-    public ArrayCorpus(File[] uniFiles, File[] triFiles)
+    public ArrayApproach(File[] uniFiles, File[] triFiles)
             throws IOException
     {
         long init, term;
@@ -75,7 +75,7 @@ public class ArrayCorpus
         System.out.println("Time taken: " + (term - init) / 1000.0);
     }
     
-    public ArrayCorpus(File uniDir, File triDir)
+    public ArrayApproach(File uniDir, File triDir)
             throws IOException
     {
         this(listFiles(uniDir), listFiles(triDir));
@@ -164,7 +164,7 @@ public class ArrayCorpus
      * This method applies binary search in the iterative paradigm.
      *
      * @param gram  The starting gram in the trigram..
-     * @return An integer array with two elements respresent the starting and ending index in the
+     * @return An integer array with two elements represent the starting and ending index in the
      * unigram corpus respectively.
      */
     private int[] startWith(String gram)

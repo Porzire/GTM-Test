@@ -1,9 +1,9 @@
-package proposed;
+package gtm.test.unarranged;
+
+import gtm.test.measure.Measure;
 
 import java.io.File;
 import java.io.IOException;
-
-import measures.Measure;
 
 import org.textsim.exception.ProcessException;
 

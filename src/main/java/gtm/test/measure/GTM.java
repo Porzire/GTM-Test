@@ -1,4 +1,4 @@
-package measures;
+package gtm.test.measure;
 
 
 /**
@@ -15,19 +15,12 @@ public class GTM
     private static final double LOG_CONST = Math.log(1.01);
     
     private Long cMax = Long.MAX_VALUE;
+    
+    public GTM(long cMax)
+    {
+        this.cMax = cMax;
+    }
 
-    @Override
-    public void setConst(double... vals)
-    {
-        this.cMax = (long)vals[0];
-    }
-    
-    @Override
-    public double getConst()
-    {
-        return cMax;
-    }
-    
     /**
      * Compute similarity between two given words.
      *

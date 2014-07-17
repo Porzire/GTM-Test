@@ -1,29 +1,31 @@
-package proposed;
-
-import measures.Measure;
+package gtm.test.approach;
 
 import org.textsim.exception.ProcessException;
 import org.textsim.util.BinaryFileFastRecordReader;
 import org.textsim.util.Unigram;
 import org.textsim.wordrt.preproc.WordrtPreproc;
-import org.textsim.wordrt.proc.AbstractWordRtProcessor;
+
+import gnu.trove.map.hash.TObjectIntHashMap;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.MappedByteBuffer;
 
-public class Stage1WordRtProcessor
-        extends AbstractWordRtProcessor {
-
-    private long[]    freqs;
-    private Measure   sim;
+public class ProposedApproach
+        implements Approach
+{
+    // Unigram Data structure.
+    private long cMax;
+    private TObjectIntHashMap<String> idMap;
+    private long[] freqs;
+    // Trigram Data structure.
     private int[]     tListStr;  // The start index of trigram sublist (inclusive)
     private int[]     tListEnd;  // The end index of trigram sublist (exclusive)
     private int[]     tListID;   // The ID of the third word in trigram
     private double[]  rt;        // The word relatedness of the trigram
     private int       uNum;      // The number of unigrams.
                                  // This variable is the length when construct tListStr and tListEnd.
-                                 // Therefore the index of the arrrays represents the ID of the unigram.
+                                 // Therefore the index of the arrays represents the ID of the unigram.
     private int       tNum;      // The number of unordered trigram pairs
                                  // This variable is the length when construct rt and tListID.
                                  // The index can be looked up in the tListStr and tListEnd.
@@ -36,12 +38,21 @@ public class Stage1WordRtProcessor
      * @throws IOException  when I/O error occurs.
      * @throws ProcessException 
      */
-    public Stage1WordRtProcessor(File uniFile, File binTrigramFile, Measure sim)
-            throws IOException, ProcessException {
-    	
-		BinaryFileFastRecordReader fastReader = new BinaryFileFastRecordReader(binTrigramFile);
+    public ProposedApproach(File uniFile, File triFile)
+            throws IOException, ProcessException
+    {
+        // Load unigram data.
+        Unigram.Data unigramData = Unigram.read(WordrtPreproc.BINARY, new File[] {uniFile});
+        idMap = unigramData.unigramIDMap;
+        freqs = unigramData.unigramCount;
+        cMax = 0;
+        for (long freq : freqs) {
+            cMax = (freq > cMax ? freq : cMax);
+        }
+        // Load trigram data.
+		BinaryFileFastRecordReader fastReader = new BinaryFileFastRecordReader(triFile);
         try {
-            fastReader = new BinaryFileFastRecordReader(binTrigramFile);
+            fastReader = new BinaryFileFastRecordReader(triFile);
     		MappedByteBuffer readerBuffer = fastReader.getBuffer();
     		long recordSize = readerBuffer.getLong();
     	    this.tNum = readerBuffer.getInt();
@@ -50,7 +61,6 @@ public class Stage1WordRtProcessor
             this.tListEnd = new int[this.uNum+1];
             this.tListID  = new int[this.tNum];
             this.rt       = new double[this.tNum];
-            this.sim = sim;
     		while (true) {
     			try {
     				//get next record length
@@ -61,9 +71,8 @@ public class Stage1WordRtProcessor
     				} else if (readerBuffer.remaining() < recordSize) {
     					//check if buffer remaining size is bigger than record length
     					//refill buffer and check if buffer can be refill
-    					if(! fastReader.refillBuffer()) {
+    					if(! fastReader.refillBuffer())
     						break;
-    					}
     					readerBuffer = fastReader.getBuffer();
     				}
     				//read record
@@ -80,53 +89,47 @@ public class Stage1WordRtProcessor
     			}
     		}
         } finally {
-            close(fastReader);
+            if (fastReader != null)
+                fastReader.close();
         }
-        freqs = Unigram.readCounts(WordrtPreproc.BINARY, new File[]{uniFile});
-        long cMax = 0;
-        for (long freq : freqs) {
-            cMax = (freq > cMax ? freq : cMax);
-        }
-        sim.setConst(cMax);
-    }
-    
-    private void close(BinaryFileFastRecordReader bffrr)
-            throws IOException {
-
-        if (bffrr != null)
-            bffrr.close();
     }
 
-	/*
-	 * Look-up the relatedness of two given words/grams from in-memory data.
-	 * 
-	 * @see org.textsim.wordrt.proc.AbstractWordRtProcessor#sim(int, int)
-	 */
-	@Override
-    public double sim(int word1, int word2) {
-        
-        if (word1 > word2) {
-            int temp = word1;
-            word1 = word2;
-            word2 = temp;
-        } else if (word1 == word2) {
+    @Override
+    public long freq(String gram)
+    {
+        return freqs[idMap.get(gram)];
+    }
+
+    @Override
+    public long freq(String gram1, String gram2)
+    {
+        int id1 = idMap.get(gram1);
+        int id2 = idMap.get(gram2);
+        if (id1 > id2) {
+            int temp = id1; id1 = id2; id2 = temp;
+        } else if (id1 == id2) {
             return 1;
         }
         // Binary search
-        int indStr = tListStr[word1],
-            indEnd = tListEnd[word1],
+        int indStr = tListStr[id1],
+            indEnd = tListEnd[id1],
             indMid = 0;
         while (indStr <= indEnd) {
         	indMid = (indStr + indEnd) / 2;
-        	if (tListID[indMid] == word2) {
-            	double triFreq = rt[indMid];
-            	return sim.sim(freqs[word1], freqs[word2], (long)triFreq);
+        	if (tListID[indMid] == id2) {
+            	return (long)rt[indMid];
         	}
-            else if (tListID[indMid] > word2)
+            else if (tListID[indMid] > id2)
                 indEnd = indMid - 1;
             else
                 indStr = indMid + 1;
         }
         return 0;
+    }
+    
+    @Override
+    public long cMax()
+    {
+        return cMax;
     }
 }

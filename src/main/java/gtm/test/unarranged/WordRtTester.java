@@ -1,8 +1,8 @@
-package proposed;
+package gtm.test.unarranged;
+
+import gtm.test.measure.GTM;
 
 import java.io.IOException;
-
-import measures.GTM;
 
 import org.textsim.exception.ProcessException;
 
@@ -73,7 +73,8 @@ public class WordRtTester {
         System.out.println("Build Data Structure");
         strtMemo = (runtime.totalMemory() - runtime.freeMemory()) / GB;
         strtTime = System.currentTimeMillis();
-        AbstractStageWordSim ws = new Stage1WordSim(uniPath, triPath, new GTM());
+        // TODO: set correct parameter.
+        AbstractStageWordSim ws = new Stage1WordSim(uniPath, triPath, new GTM(0));
         endTime = System.currentTimeMillis();
         endMemo = (runtime.totalMemory() - runtime.freeMemory()) / GB;
         // System.out.println("Time taken: " + (endTime - strtTime) / 1000.0 + "s");

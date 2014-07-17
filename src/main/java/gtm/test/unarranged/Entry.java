@@ -1,4 +1,6 @@
-package gtm.test;
+package gtm.test.unarranged;
+
+import gtm.test.approach.ArrayApproach;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -55,7 +57,7 @@ public class Entry
         // Load corpus data into memory.
         Runtime runtime = Runtime.getRuntime();
         float str = (runtime.totalMemory() - runtime.freeMemory()) / MB;
-        GTMAlgo gtm = new GTMAlgo(new ArrayCorpus(new File(uniDir), new File(triDir)));
+        // GTMAlgo gtm = new GTMAlgo(new ArrayApproach(new File(uniDir), new File(triDir)));
         float end = (runtime.totalMemory() - runtime.freeMemory()) / MB;
         System.out.println("Memory used: " + (end - str) + " MB");
 
@@ -73,7 +75,7 @@ public class Entry
         // double[] result = new double[word1.length];
         for (int i = 0; i < word1.length; i++) {
             // result[i] = gtm.wordrt(word1[i], word2[i]);
-            gtm.wordrt(word1[i], word2[i]);
+            // gtm.wordrt(word1[i], word2[i]);
         }
         term = System.currentTimeMillis();
         System.out.println("Time taken: " + (term - init) / 1000.0);
