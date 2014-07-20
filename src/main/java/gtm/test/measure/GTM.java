@@ -34,7 +34,7 @@ public class GTM
         long minFreq = (freq1 < freq2 ? freq1 : freq2);
         // Force computation!
         minFreq = (minFreq == 0 ? 1 : minFreq);
-        double condition = ((double)triFreq * cMax * cMax) / (freq1 * freq2 * minFreq);
+        double condition = ((double)triFreq / 2 * cMax * cMax) / (freq1 * freq2 * minFreq);
         double denominator =  -2 * Math.log((double)minFreq / cMax);
         if (condition > 1) {
             return Math.log(condition) / denominator;

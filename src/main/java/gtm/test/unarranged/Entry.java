@@ -1,6 +1,6 @@
 package gtm.test.unarranged;
 
-import gtm.test.approach.ArrayApproach;
+import gtm.test.approach.StringArrayApproach;
 
 import java.io.BufferedReader;
 import java.io.File;
