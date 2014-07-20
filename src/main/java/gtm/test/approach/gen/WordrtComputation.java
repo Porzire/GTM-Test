@@ -40,17 +40,17 @@ import org.textsim.wordrt.preproc.WordrtPreproc;
 public class  WordrtComputation {
 
     /**
-     * The suffix {@code String} of the outptut data file.
+     * The suffix {@code String} of the output data file.
      */
     public static final String DATA_SUFFIX = "wcd";
 
     /**
-     * The suffix {@code String} of the outptut count file.
+     * The suffix {@code String} of the output count file.
      */
     public static final String COUNT_SUFFIX = "wcc";
 
     /**
-     * The maximum unigram frequence.
+     * The maximum unigram frequency.
      */
     private static double cMax = 0;
 
@@ -73,8 +73,6 @@ public class  WordrtComputation {
     	String trigramDataFilePathname = tempDir + File.separator + FileUtil.getFilenameWithoutSuffix(trigramSortedInterDataFile) + '.' + DATA_SUFFIX;
     	String trigramCountFilePathname = tempDir + File.separator + FileUtil.getFilenameWithoutSuffix(trigramSortedInterDataFile) + '.' + COUNT_SUFFIX;
     	 	
-    	long count = 0;
-    
     	try (
             BufferedReader trigramSortedInterData = new BufferedReader(new FileReader(trigramSortedInterDataFile));
             BufferedWriter trigramData = new BufferedWriter(new FileWriter(trigramDataFilePathname));
@@ -111,10 +109,8 @@ public class  WordrtComputation {
     			} else {
     				rt = computeRT(uCount[prevGram1ID], uCount[prevGram2ID], freq);
     				 
-    				if (rt > 0.001) {
-    					count++;
+    				if (rt > 0.001)
     					trigramData.write("\t" + prevGram2ID + "\t" + df.format(rt));
-    				}
     				
     				if (prevGram1ID != gram1ID)
     					trigramData.write("\n" + Integer.toString(gram1ID));
@@ -126,14 +122,10 @@ public class  WordrtComputation {
     		}
     		rt = computeRT(uCount[prevGram1ID], uCount[prevGram2ID], freq);
     
-    		if (prevGram1ID != gram1ID) {
+    		if (prevGram1ID != gram1ID)
     			trigramData.write("\n" + gram1ID);
-    		}
-    
-    		if (rt > 0.001) {
+    		if (rt > 0.001)
     			trigramData.write("\t" + prevGram2ID + "\t" + df.format(rt));
-    			count++;		
-    		}
 	 	}
 	 	
 	}
@@ -141,8 +133,8 @@ public class  WordrtComputation {
     /**
      * Compute the relatedness of two grams.
      * 
-     * @param  gram1Count  The {@code long} count of the gram in either first or third postion of the trigram.
-     * @param  gram2Count  The {@code long} count of the another gram in either first or third postion of the trigram.
+     * @param  gram1Count  The {@code long} count of the gram in either first or third position of the trigram.
+     * @param  gram2Count  The {@code long} count of the another gram in either first or third position of the trigram.
      * @param  freq        The {@code long} count of this trigram.
      *
      * @return The relatedness value of two grams.
@@ -162,7 +154,6 @@ public class  WordrtComputation {
 	       	 return 0;
 	     } else {
 	    	 double condition = (freq / 2 * cMaxSquared) / (gram1Count * gram2Count * gramMinCount);
-	  	  
 	  	     if (condition > 1) {
 	  	       	 return (float)(Math.log(condition) / (-2 * Math.log(gramMinCount /cMax)));
 	  	     } else {

@@ -129,7 +129,7 @@ public class CorpusGenerator {
         System.out.println("\tCorpus Name: " + stg2Nm);
         System.out.println("\tOutput Dir:  " + stg2OutDir);
 
-        genStage1Corpus(uniDir, triDir, stg1OutDir, stg1Nm);
-        genStage2Corpus(uniDir, triDir, stg2OutDir, stg2Nm);
+        gen(1, uniDir, triDir, stg1OutDir, stg1Nm);
+        gen(2, uniDir, triDir, stg1OutDir, stg1Nm);
     }
 }

@@ -21,6 +21,5 @@
 **.swo
 
 # Large Corpus files #
-/src/main/resources
-**/src/test/resources/corpora/
+/etc
 /target

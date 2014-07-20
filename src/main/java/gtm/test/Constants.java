@@ -4,7 +4,7 @@ import java.io.File;
 
 public class Constants
 {
-    public static final File resourcesDir = new File("src/main/resources");
+    public static final File resourcesDir = new File("etc");
 
     public static final File corpusDir = new File(resourcesDir, "corpus");
     public static final File stage1Uni = new File(corpusDir, "Stage1.uni");

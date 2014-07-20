@@ -36,12 +36,12 @@ import org.textsim.wordrt.preproc.UnigramPreprocess;
 public class  FrequencyPrint
 {
     /**
-     * The suffix {@code String} of the outptut data file.
+     * The suffix {@code String} of the output data file.
      */
     public static final String DATA_SUFFIX = "wcd";
 
     /**
-     * The suffix {@code String} of the outptut count file.
+     * The suffix {@code String} of the output count file.
      */
     public static final String COUNT_SUFFIX = "wcc";
 
@@ -62,8 +62,6 @@ public class  FrequencyPrint
     	File unigramDataFile = FileUtil.getFileInDirectoryWithSuffix(tempDir, UnigramPreprocess.DATA_SUFFIX);
     	String trigramDataFilePathname = tempDir + File.separator + FileUtil.getFilenameWithoutSuffix(trigramSortedInterDataFile) + '.' + DATA_SUFFIX;
     	String trigramCountFilePathname = tempDir + File.separator + FileUtil.getFilenameWithoutSuffix(trigramSortedInterDataFile) + '.' + COUNT_SUFFIX;
-    	 	
-    	long count = 0;
     
     	try (
             BufferedReader trigramSortedInterData = new BufferedReader(new FileReader(trigramSortedInterDataFile));
@@ -96,10 +94,8 @@ public class  FrequencyPrint
     				freq += Long.parseLong(line.nextToken());
     			} else {
     			    // Use frequency instead of relatedness.
-    				if (freq > 0) {
-    					count++;
+    				if (freq > 0)
     					trigramData.write("\t" + prevGram2ID + "\t" + freq);
-    				}
     				
     				if (prevGram1ID != gram1ID)
     					trigramData.write("\n" + Integer.toString(gram1ID));
@@ -109,15 +105,12 @@ public class  FrequencyPrint
     				freq = Long.parseLong(line.nextToken());
     			}
     		}
-    		if (prevGram1ID != gram1ID) {
+    		if (prevGram1ID != gram1ID)
     			trigramData.write("\n" + gram1ID);
-    		}
     
 		    // Use frequency instead of relatedness.
-    		if (freq > 0) {
+    		if (freq > 0)
     			trigramData.write("\t" + prevGram2ID + "\t" + freq);
-    			count++;		
-    		}
 	 	}
 	}
 }

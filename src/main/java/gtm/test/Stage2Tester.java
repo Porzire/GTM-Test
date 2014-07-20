@@ -1,12 +1,15 @@
 package gtm.test;
 
 import gnu.trove.map.hash.TObjectIntHashMap;
+import gtm.test.approach.Pair;
 import gtm.test.approach.Pairs;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 
+import org.textsim.exception.ProcessException;
 import org.textsim.util.Unigram;
 import org.textsim.wordrt.preproc.WordrtPreproc;
 import org.textsim.wordrt.proc.DefaultWordRtProcessor;
@@ -23,7 +26,8 @@ public class Stage2Tester
     private WordRtProcessor processor;
     private TObjectIntHashMap<String> idMap;
 
-    public Stage2Tester(String uniFile, File triFile)
+    public Stage2Tester(File uniFile, File triFile)
+            throws IOException, ProcessException
     {
         processor = new DefaultWordRtProcessor(triFile);
         idMap = Unigram.readIDMap(WordrtPreproc.BINARY, new File[]{uniFile});
@@ -33,7 +37,7 @@ public class Stage2Tester
     public void test(Pairs pairs)
     {
         for (Pair pair : pairs)
-            processor.sim(idMap.get(pairs.word1), idMap.get(pairs.word2));
+            processor.sim(idMap.get(pair.word1), idMap.get(pair.word2));
     }
 
     @Override
@@ -41,11 +45,11 @@ public class Stage2Tester
             throws IOException
     {
         try (
-            BufferedWriter bw = new BufferedWriter(new FileWriter(new File(outFile)));
+            BufferedWriter bw = new BufferedWriter(out);
         ){
-            for (int i = 0; i < word1.length; i++) {
-                double sim = processor.sim(idMap.get(word1[i]), idMap.get(word2[i]));
-                bw.write(word1[i] + "\t" + word2[i] + "\t" + sim + "\n");
+            for (Pair pair : pairs) {
+                double sim = processor.sim(idMap.get(pair.word1), idMap.get(pair.word2));
+                bw.write(pair.word1 + "\t" + pair.word2 + "\t" + sim + "\n");
             }
         }
     }
