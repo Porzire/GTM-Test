@@ -32,7 +32,7 @@ import org.textsim.wordrt.preproc.WordrtPreproc;
  * </ol>
  * The output does not have repeated entries, the pattern is:
  * <pre>
- * word1id	word2id	relatedness 
+ * word1id  word2id relatedness 
  * </pre></p>
  *
  * @author  <a href="mailto:mei.jie@hotmail.com">Jie Mei</a>
@@ -66,70 +66,70 @@ public class  WordrtComputation {
      */
     public static void processT(String tempDir)
             throws FileNotFoundException, NoSuchElementException, IOException, ProcessException {
-		
+        
         File trigramSortedInterDataFile = FileUtil.getFileInDirectoryWithSuffix(tempDir, TrigramExternalSort.DATA_SUFFIX);
-    	File unigramDataFile = FileUtil.getFileInDirectoryWithSuffix(tempDir, UnigramPreprocess.DATA_SUFFIX);
-    	File unigramCountFile = FileUtil.getFileInDirectoryWithSuffix(tempDir, UnigramPreprocess.COUNT_SUFFIX);
-    	String trigramDataFilePathname = tempDir + File.separator + FileUtil.getFilenameWithoutSuffix(trigramSortedInterDataFile) + '.' + DATA_SUFFIX;
-    	String trigramCountFilePathname = tempDir + File.separator + FileUtil.getFilenameWithoutSuffix(trigramSortedInterDataFile) + '.' + COUNT_SUFFIX;
-    	 	
-    	try (
+        File unigramDataFile = FileUtil.getFileInDirectoryWithSuffix(tempDir, UnigramPreprocess.DATA_SUFFIX);
+        File unigramCountFile = FileUtil.getFileInDirectoryWithSuffix(tempDir, UnigramPreprocess.COUNT_SUFFIX);
+        String trigramDataFilePathname = tempDir + File.separator + FileUtil.getFilenameWithoutSuffix(trigramSortedInterDataFile) + '.' + DATA_SUFFIX;
+        String trigramCountFilePathname = tempDir + File.separator + FileUtil.getFilenameWithoutSuffix(trigramSortedInterDataFile) + '.' + COUNT_SUFFIX;
+            
+        try (
             BufferedReader trigramSortedInterData = new BufferedReader(new FileReader(trigramSortedInterDataFile));
             BufferedWriter trigramData = new BufferedWriter(new FileWriter(trigramDataFilePathname));
             BufferedWriter trigramCount = new BufferedWriter(new FileWriter(trigramCountFilePathname));
         ){
-    	 	String unigramDataName = FileUtil.getFilenameWithoutSuffix(unigramDataFile.getCanonicalPath(), UnigramPreprocess.DATA_SUFFIX);
-    	 	String trigramDataName = FileUtil.getFilenameWithoutSuffix(trigramDataFilePathname, TrigramCountSummation.DATA_SUFFIX);
-    	 	// Add header to the files
-    	 	IOUtil.writePreprocTrigramHeader(trigramData, new File(unigramDataName), new File(trigramDataName), "data");
-    	 	IOUtil.writePreprocTrigramHeader(trigramCount, new File(unigramDataName), new File(trigramDataName), "count");
-    		
-    		int gram1ID = 0, gram2ID = 0, prevGram1ID = 0, prevGram2ID = 0;
-    		long freq = 0;
-    		boolean isFirstGram = true;
-    		double rt;
-    		long[] uCount = Unigram.readCounts(WordrtPreproc.TEXT, unigramDataFile, unigramCountFile);
-    		cMax = Unigram.readCMax(unigramCountFile);
-    		DecimalFormat df = new DecimalFormat("#.###");
+            String unigramDataName = FileUtil.getFilenameWithoutSuffix(unigramDataFile.getCanonicalPath(), UnigramPreprocess.DATA_SUFFIX);
+            String trigramDataName = FileUtil.getFilenameWithoutSuffix(trigramDataFilePathname, TrigramCountSummation.DATA_SUFFIX);
+            // Add header to the files
+            IOUtil.writePreprocTrigramHeader(trigramData, new File(unigramDataName), new File(trigramDataName), "data");
+            IOUtil.writePreprocTrigramHeader(trigramCount, new File(unigramDataName), new File(trigramDataName), "count");
+            
+            int gram1ID = 0, gram2ID = 0, prevGram1ID = 0, prevGram2ID = 0;
+            long freq = 0;
+            boolean isFirstGram = true;
+            double rt;
+            long[] uCount = Unigram.readCounts(WordrtPreproc.TEXT, unigramDataFile, unigramCountFile);
+            cMax = Unigram.readCMax(unigramCountFile);
+            DecimalFormat df = new DecimalFormat("#.###");
     
-    		for (String inputLine; (inputLine = trigramSortedInterData.readLine()) != null; ) {
-    			StringTokenizer line = new StringTokenizer(inputLine);
+            for (String inputLine; (inputLine = trigramSortedInterData.readLine()) != null; ) {
+                StringTokenizer line = new StringTokenizer(inputLine);
     
-    			gram1ID = Integer.parseInt(line.nextToken());
-    			gram2ID = Integer.parseInt(line.nextToken());
+                gram1ID = Integer.parseInt(line.nextToken());
+                gram2ID = Integer.parseInt(line.nextToken());
     
-    			if (isFirstGram) {
-    				prevGram1ID = gram1ID;
-    				prevGram2ID = gram2ID;
-    				freq = Long.parseLong(line.nextToken());
-    				trigramData.write(Integer.toString(gram1ID));
-    				isFirstGram = false;
-    			} else if (gram1ID == prevGram1ID && gram2ID == prevGram2ID) {
-    				freq += Long.parseLong(line.nextToken());
-    			} else {
-    				rt = computeRT(uCount[prevGram1ID], uCount[prevGram2ID], freq);
-    				 
-    				if (rt > 0.001)
-    					trigramData.write("\t" + prevGram2ID + "\t" + df.format(rt));
-    				
-    				if (prevGram1ID != gram1ID)
-    					trigramData.write("\n" + Integer.toString(gram1ID));
-    				
-    				prevGram1ID = gram1ID;
-    				prevGram2ID = gram2ID;
-    				freq = Long.parseLong(line.nextToken());
-    			}
-    		}
-    		rt = computeRT(uCount[prevGram1ID], uCount[prevGram2ID], freq);
+                if (isFirstGram) {
+                    prevGram1ID = gram1ID;
+                    prevGram2ID = gram2ID;
+                    freq = Long.parseLong(line.nextToken());
+                    trigramData.write(Integer.toString(gram1ID));
+                    isFirstGram = false;
+                } else if (gram1ID == prevGram1ID && gram2ID == prevGram2ID) {
+                    freq += Long.parseLong(line.nextToken());
+                } else {
+                    rt = computeRT(uCount[prevGram1ID], uCount[prevGram2ID], freq);
+                     
+                    if (rt > 0.001)
+                        trigramData.write("\t" + prevGram2ID + "\t" + df.format(rt));
+                    
+                    if (prevGram1ID != gram1ID)
+                        trigramData.write("\n" + Integer.toString(gram1ID));
+                    
+                    prevGram1ID = gram1ID;
+                    prevGram2ID = gram2ID;
+                    freq = Long.parseLong(line.nextToken());
+                }
+            }
+            rt = computeRT(uCount[prevGram1ID], uCount[prevGram2ID], freq);
     
-    		if (prevGram1ID != gram1ID)
-    			trigramData.write("\n" + gram1ID);
-    		if (rt > 0.001)
-    			trigramData.write("\t" + prevGram2ID + "\t" + df.format(rt));
-	 	}
-	 	
-	}
-	
+            if (prevGram1ID != gram1ID)
+                trigramData.write("\n" + gram1ID);
+            if (rt > 0.001)
+                trigramData.write("\t" + prevGram2ID + "\t" + df.format(rt));
+        }
+        
+    }
+    
     /**
      * Compute the relatedness of two grams.
      * 
@@ -144,27 +144,27 @@ public class  WordrtComputation {
      * 
      * Need DEBUG
      */
-	 private static float computeRT(long gram1Count, long gram2Count, long freq) throws NumberFormatException, IOException {
-		 
-		 double gramMinCount = Math.min(gram1Count, gram2Count);
-	     //double cMax = 19401194714.0;  // maximum frequency among all unigram
-	     double cMaxSquared = cMax * cMax;
-	     
-	     if(freq == 0) {
-	       	 return 0;
-	     } else {
-	    	 double condition = (freq / 2 * cMaxSquared) / (gram1Count * gram2Count * gramMinCount);
-	  	     if (condition > 1) {
-	  	       	 return (float)(Math.log(condition) / (-2 * Math.log(gramMinCount /cMax)));
-	  	     } else {
-	  	         return (float)(Math.log(1.01) / (-2 * Math.log(gramMinCount /cMax)));
-		     }
-	     }
-	 }
-	 
-//	 public static void main(String[] args) throws NumberFormatException, IOException{
-//		 // word1 occurs 10000 times
-//		 //word1 (X) word1 occurs 5 times
-//		 System.out.println(WordrtComputation.computeRT(10000,10000,2));
-//	 }
+     private static float computeRT(long gram1Count, long gram2Count, long freq) throws NumberFormatException, IOException {
+         
+         double gramMinCount = Math.min(gram1Count, gram2Count);
+         //double cMax = 19401194714.0;  // maximum frequency among all unigram
+         double cMaxSquared = cMax * cMax;
+         
+         if(freq == 0) {
+             return 0;
+         } else {
+             double condition = (freq / 2 * cMaxSquared) / (gram1Count * gram2Count * gramMinCount);
+             if (condition > 1) {
+                 return (float)(Math.log(condition) / (-2 * Math.log(gramMinCount /cMax)));
+             } else {
+                 return (float)(Math.log(1.01) / (-2 * Math.log(gramMinCount /cMax)));
+             }
+         }
+     }
+     
+//   public static void main(String[] args) throws NumberFormatException, IOException{
+//       // word1 occurs 10000 times
+//       //word1 (X) word1 occurs 5 times
+//       System.out.println(WordrtComputation.computeRT(10000,10000,2));
+//   }
 }
