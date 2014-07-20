@@ -1,12 +1,12 @@
-package gtm.test.measure;
+package gtm.test.util;
 
 
-public class Jaccard
+public class Simpon
         extends Measure
 {
     @Override
     public double sim(long w1Freq, long w2Freq, long triFreq)
     {
-        return (double)triFreq / (w1Freq + w2Freq - triFreq);
+        return (double)triFreq / (w1Freq <= w2Freq ? w1Freq : w2Freq);
     }
 }

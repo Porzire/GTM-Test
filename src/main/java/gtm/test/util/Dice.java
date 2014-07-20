@@ -1,12 +1,12 @@
-package gtm.test.measure;
+package gtm.test.util;
 
 
-public class Simpon
+public class Dice
         extends Measure
 {
     @Override
     public double sim(long w1Freq, long w2Freq, long triFreq)
     {
-        return (double)triFreq / (w1Freq <= w2Freq ? w1Freq : w2Freq);
+        return 2.0 * triFreq / (w1Freq + w2Freq);
     }
 }

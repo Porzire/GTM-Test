@@ -6,7 +6,7 @@ import org.textsim.util.Unigram;
 import org.textsim.wordrt.preproc.WordrtPreproc;
 import org.textsim.wordrt.proc.AbstractWordRtProcessor;
 
-import gtm.test.measure.Measure;
+import gtm.test.util.Measure;
 
 import java.io.File;
 import java.io.IOException;

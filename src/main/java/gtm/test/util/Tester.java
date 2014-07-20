@@ -1,14 +1,12 @@
-package gtm.test;
+package gtm.test.util;
 
 import java.io.IOException;
 import java.io.Writer;
 
-import gtm.test.approach.Pairs;
-
 /**
  * Tester.
  */
-abstract class Tester
+public abstract class Tester
 {
     /**
      * Run the test without writing out output.

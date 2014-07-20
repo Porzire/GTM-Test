@@ -1,6 +1,6 @@
 package gtm.test.unarranged;
 
-import gtm.test.measure.GTM;
+import gtm.test.util.GTM;
 
 import java.io.IOException;
 

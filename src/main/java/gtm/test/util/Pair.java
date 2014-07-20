@@ -1,4 +1,4 @@
-package gtm.test.approach;
+package gtm.test.util;
 
 public class Pair
 {

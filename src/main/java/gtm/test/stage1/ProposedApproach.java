@@ -1,4 +1,4 @@
-package gtm.test.approach;
+package gtm.test.stage1;
 
 import org.textsim.exception.ProcessException;
 import org.textsim.util.BinaryFileFastRecordReader;

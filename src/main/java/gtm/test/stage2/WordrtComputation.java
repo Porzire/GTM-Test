@@ -1,4 +1,4 @@
-package gtm.test.approach.gen;
+package gtm.test.stage2;
 
 
 import java.io.BufferedReader;

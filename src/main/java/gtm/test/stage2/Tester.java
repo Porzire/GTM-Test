@@ -1,8 +1,8 @@
-package gtm.test;
+package gtm.test.stage2;
 
 import gnu.trove.map.hash.TObjectIntHashMap;
-import gtm.test.approach.Pair;
-import gtm.test.approach.Pairs;
+import gtm.test.util.Pair;
+import gtm.test.util.Pairs;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -20,13 +20,13 @@ import org.textsim.wordrt.proc.WordRtProcessor;
  *
  * @author Jie Mei
  */
-public class Stage2Tester
-        extends Tester
+public class Tester
+        extends gtm.test.util.Tester
 {
     private WordRtProcessor processor;
     private TObjectIntHashMap<String> idMap;
 
-    public Stage2Tester(File uniFile, File triFile)
+    public Tester(File uniFile, File triFile)
             throws IOException, ProcessException
     {
         processor = new DefaultWordRtProcessor(triFile);

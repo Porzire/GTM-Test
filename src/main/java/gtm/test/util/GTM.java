@@ -1,4 +1,4 @@
-package gtm.test.measure;
+package gtm.test.util;
 
 
 /**

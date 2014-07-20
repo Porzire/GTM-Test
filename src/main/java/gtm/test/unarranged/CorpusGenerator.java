@@ -1,4 +1,6 @@
-package gtm.test.approach.gen;
+package gtm.test.unarranged;
+
+import gtm.test.stage1.FrequencyPrint;
 
 import java.io.File;
 

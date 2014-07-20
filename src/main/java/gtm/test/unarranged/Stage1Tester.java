@@ -1,12 +1,12 @@
 package gtm.test.unarranged;
 
-import gtm.test.measure.Dice;
-import gtm.test.measure.GTM;
-import gtm.test.measure.Jaccard;
-import gtm.test.measure.Measure;
-import gtm.test.measure.NGD;
-import gtm.test.measure.PMI;
-import gtm.test.measure.Simpon;
+import gtm.test.util.Dice;
+import gtm.test.util.GTM;
+import gtm.test.util.Jaccard;
+import gtm.test.util.Measure;
+import gtm.test.util.NGD;
+import gtm.test.util.PMI;
+import gtm.test.util.Simpon;
 
 import java.io.IOException;
 

@@ -6,10 +6,12 @@ import java.io.IOException;
 
 import org.textsim.exception.ProcessException;
 
-import gtm.test.approach.Approach;
-import gtm.test.approach.Pairs;
-import gtm.test.approach.ProposedApproach;
-import gtm.test.measure.Jaccard;
+import gtm.test.stage1.Approach;
+import gtm.test.stage1.ProposedApproach;
+import gtm.test.stage1.Tester;
+import gtm.test.util.Constants;
+import gtm.test.util.Jaccard;
+import gtm.test.util.Pairs;
 
 public class CorrectnessTest
 {
@@ -37,7 +39,7 @@ public class CorrectnessTest
 
         System.out.print("Create tester ");
         strTime = System.currentTimeMillis();
-        Stage1Tester tester = new Stage1Tester(approach).setMeasure(new Jaccard());
+        Tester tester = new Tester(approach).setMeasure(new Jaccard());
         endTime = System.currentTimeMillis();
         System.out.println("takes " + (endTime - strTime) / 1000.0 + " s.");
 

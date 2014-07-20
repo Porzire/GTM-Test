@@ -1,21 +1,20 @@
-package gtm.test;
+package gtm.test.stage1;
 
-import gtm.test.approach.Approach;
-import gtm.test.approach.Pair;
-import gtm.test.approach.Pairs;
-import gtm.test.measure.Measure;
+import gtm.test.util.Measure;
+import gtm.test.util.Pair;
+import gtm.test.util.Pairs;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.Writer;
 
-public class Stage1Tester
-        extends Tester
+public class Tester
+        extends gtm.test.util.Tester
 {
     Approach approach;
     Measure measure;
 
-    public Stage1Tester(Approach approach)
+    public Tester(Approach approach)
     {
         this.approach = approach;
     }
@@ -23,7 +22,7 @@ public class Stage1Tester
     /**
      * Set measure for relatedness computation.
      */
-    public Stage1Tester setMeasure(Measure measure)
+    public Tester setMeasure(Measure measure)
     {
         this.measure = measure;
         return this;
