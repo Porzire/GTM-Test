@@ -11,6 +11,7 @@ import java.util.List;
 import org.textsim.exception.ProcessException;
 
 import gtm.test.util.Constants;
+import gtm.test.util.GTM;
 import gtm.test.util.Jaccard;
 import gtm.test.util.Pairs;
 
@@ -21,7 +22,9 @@ public class Main
     {
         String[] funcArgs = Arrays.copyOfRange(args, 1, args.length);
         switch (args[0]) {
-          case "gen": genData(funcArgs);
+          case "gen":   genData(funcArgs); break;
+          case "test1": testStage1();      break;
+          case "test2": testStage2();      break;
         }
     }
     
@@ -47,16 +50,38 @@ public class Main
         }
     }
     
-    @SuppressWarnings("unused")
     private static void testStage1()
             throws IOException, ProcessException
     {
         System.out.print("Start testing...");
         long initTime = System.currentTimeMillis();
 
-        new gtm.test.stage1.Tester(new gtm.test.stage1.ProposedApproach(Constants.stage1Uni, Constants.stage1Tri))
-                        .setMeasure(new Jaccard())
-                        .testAndWrite(new Pairs(Constants.pairs2), new FileWriter(new File(Constants.resourcesDir, "test1.out")));
+        gtm.test.stage1.ProposedApproach proposedApproach =
+                // new gtm.test.stage1.ProposedApproach(Constants.stage1Uni, Constants.stage1Tri);
+                new gtm.test.stage1.ProposedApproach(Constants.aresUni, Constants.aresTri);
+        gtm.test.stage1.Tester tester =
+                new gtm.test.stage1.Tester(proposedApproach);
+        
+        tester.setMeasure(new Jaccard())
+              .testAndWrite(new Pairs(Constants.pairs3), new FileWriter(new File(Constants.resourcesDir, "test1.jaccard")));
+        tester.setMeasure(new GTM(proposedApproach.cMax()))
+              .testAndWrite(new Pairs(Constants.pairs3), new FileWriter(new File(Constants.resourcesDir, "test1.gtm")));
+
+        long termTime = System.currentTimeMillis();
+        System.out.println("done! Time taken: " + (termTime - initTime) / 1000.0 + "s.");
+    }
+
+    private static void testStage2()
+            throws IOException, ProcessException
+    {
+        System.out.print("Start testing...");
+        long initTime = System.currentTimeMillis();
+
+        gtm.test.stage2.Tester tester =
+                // new gtm.test.stage2.Tester(Constants.stage2Uni, Constants.stage2Tri);
+                new gtm.test.stage2.Tester(Constants.aresUni, Constants.aresTri);
+        
+        tester.testAndWrite(new Pairs(Constants.pairs3), new FileWriter(new File(Constants.resourcesDir, "test2.gtm")));
 
         long termTime = System.currentTimeMillis();
         System.out.println("done! Time taken: " + (termTime - initTime) / 1000.0 + "s.");

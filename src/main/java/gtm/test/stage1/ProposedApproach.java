@@ -15,9 +15,9 @@ public class ProposedApproach
         implements Approach
 {
     // Unigram Data structure.
-    private long cMax;
-    private TObjectIntHashMap<String> idMap;
-    private long[] freqs;
+    protected long cMax;
+    protected TObjectIntHashMap<String> idMap;
+    protected long[] freqs;
     // Trigram Data structure.
     private int[]     tListStr;  // The start index of trigram sublist (inclusive)
     private int[]     tListEnd;  // The end index of trigram sublist (exclusive)
@@ -103,8 +103,11 @@ public class ProposedApproach
     @Override
     public long freq(String gram1, String gram2)
     {
-        int id1 = idMap.get(gram1);
-        int id2 = idMap.get(gram2);
+        return freq(idMap.get(gram1), idMap.get(gram2));
+    }
+    
+    protected long freq(int id1, int id2)
+    {
         if (id1 > id2) {
             int temp = id1; id1 = id2; id2 = temp;
         } else if (id1 == id2) {

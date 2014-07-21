@@ -16,8 +16,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jdk.version>1.7</jdk.version>
         <finalName>GTM-test</finalName>
-        <exec.mainClass>gtm.test.Entry</exec.mainClass>
-        <jar.mainClass>gtm.test.Entry</jar.mainClass>
+        <exec.mainClass>gtm.test.Main</exec.mainClass>
+        <jar.mainClass>gtm.test.Main</jar.mainClass>
     </properties>
 
     <licenses>

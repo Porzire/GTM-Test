@@ -85,7 +85,7 @@ public class  WordrtComputation {
             IOUtil.writePreprocTrigramHeader(trigramCount, new File(unigramDataName), new File(trigramDataName), "count");
             
             int gram1ID = 0, gram2ID = 0, prevGram1ID = 0, prevGram2ID = 0;
-            long freq = 0;
+            long freq = 0, count = 0;
             boolean isFirstGram = true;
             double rt;
             long[] uCount = Unigram.readCounts(WordrtPreproc.TEXT, unigramDataFile, unigramCountFile);
@@ -109,8 +109,10 @@ public class  WordrtComputation {
                 } else {
                     rt = computeRT(uCount[prevGram1ID], uCount[prevGram2ID], freq);
                      
-                    if (rt > 0.001)
+                    if (rt > 0.001) {
                         trigramData.write("\t" + prevGram2ID + "\t" + df.format(rt));
+                        count++;
+                    }
                     
                     if (prevGram1ID != gram1ID)
                         trigramData.write("\n" + Integer.toString(gram1ID));
@@ -124,10 +126,12 @@ public class  WordrtComputation {
     
             if (prevGram1ID != gram1ID)
                 trigramData.write("\n" + gram1ID);
-            if (rt > 0.001)
+            if (rt > 0.001) {
                 trigramData.write("\t" + prevGram2ID + "\t" + df.format(rt));
+                count++;
+            }
+            trigramCount.write(Long.toString(count));
         }
-        
     }
     
     /**
@@ -161,10 +165,4 @@ public class  WordrtComputation {
              }
          }
      }
-     
-//   public static void main(String[] args) throws NumberFormatException, IOException{
-//       // word1 occurs 10000 times
-//       //word1 (X) word1 occurs 5 times
-//       System.out.println(WordrtComputation.computeRT(10000,10000,2));
-//   }
 }

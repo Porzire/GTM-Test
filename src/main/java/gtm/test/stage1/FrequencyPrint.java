@@ -75,7 +75,7 @@ public class  FrequencyPrint
             IOUtil.writePreprocTrigramHeader(trigramCount, new File(unigramDataName), new File(trigramDataName), "count");
             
             int gram1ID = 0, gram2ID = 0, prevGram1ID = 0, prevGram2ID = 0;
-            long freq = 0;
+            long freq = 0, count = 0;
             boolean isFirstGram = true;
     
             for (String inputLine; (inputLine = trigramSortedInterData.readLine()) != null; ) {
@@ -94,8 +94,10 @@ public class  FrequencyPrint
                     freq += Long.parseLong(line.nextToken());
                 } else {
                     // Use frequency instead of relatedness.
-                    if (freq > 0)
+                    if (freq > 0) {
                         trigramData.write("\t" + prevGram2ID + "\t" + freq);
+                        count++;
+                    }
                     
                     if (prevGram1ID != gram1ID)
                         trigramData.write("\n" + Integer.toString(gram1ID));
@@ -107,10 +109,13 @@ public class  FrequencyPrint
             }
             if (prevGram1ID != gram1ID)
                 trigramData.write("\n" + gram1ID);
-    
             // Use frequency instead of relatedness.
-            if (freq > 0)
+            if (freq > 0) {
                 trigramData.write("\t" + prevGram2ID + "\t" + freq);
+                count++;
+            }
+            // Write cout to the cout file.
+            trigramCount.write(Long.toString(count));
         }
     }
 }

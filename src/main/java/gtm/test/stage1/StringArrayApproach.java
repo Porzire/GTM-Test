@@ -3,9 +3,15 @@ package gtm.test.stage1;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -21,8 +27,10 @@ import java.util.Comparator;
  * @author Jie Mei
  */
 public class StringArrayApproach
-        implements Approach
+        implements Approach, Serializable
 {
+    private static final long serialVersionUID = -988281163471228506L;
+
     /**
      * The unigram data.
      * Each line is a unigram record in Google n-gram corpus.
@@ -41,10 +49,29 @@ public class StringArrayApproach
     private long cMax;
 
     /**
+     * Read object from serialized file.
+     * 
+     * @param  serFile  Serialized file.
+     * @return A StringArrayApproach object.
+     * @throws FileNotFoundException
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    public static StringArrayApproach read(File serFile)
+            throws FileNotFoundException, IOException, ClassNotFoundException
+    {
+        try (
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(serFile));
+        ){
+            return (StringArrayApproach) ois.readObject();
+        }
+    }
+
+    /**
      * Constructs the object with input files.
      *
-     * @param uniDir  The unigram directory.
-     * @param triDir  The trigram directory.
+     * @param  uniDir  The unigram directory.
+     * @param  triDir  The trigram directory.
      */
     public StringArrayApproach(File[] uniFiles, File[] triFiles)
             throws IOException
@@ -136,8 +163,8 @@ public class StringArrayApproach
     /**
      * Get the total frequency of the trigram pattern with specific heading and tailing gram.
      *
-     * @param gram1  The starting gram in the trigram.
-     * @param gram3  The starting gram in the trigram.
+     * @param  gram1  The starting gram in the trigram.
+     * @param  gram3  The starting gram in the trigram.
      * @return the total frequency of the trigram pattern with specific heading and tailing gram.
      */
     private long patternFreq(String gram1, String gram3)
@@ -279,5 +306,15 @@ public class StringArrayApproach
             }
         }
         return data;
+    }
+    
+    public void write(File out)
+            throws IOException
+    {
+        try (
+            ObjectOutputStream fos = new ObjectOutputStream(new FileOutputStream(out));
+        ){
+            fos.writeObject(this);
+        }
     }
 }
