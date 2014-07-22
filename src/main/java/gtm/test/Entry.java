@@ -16,32 +16,41 @@ import gtm.test.util.Jaccard;
 import gtm.test.util.Measure;
 import gtm.test.util.Pairs;
 
-public class Main
+public class Entry
 {
     private static final int[] cases = {1000, 10000, 100000, 1000000, 10000000 };
 
     public static void main(String[] args)
             throws Exception
     {
-        genData(Constants.uniDir, Constants.triDir, new File("./out"));
-        // testStage1();
-        // testStage2();
+        String[] funcArgs = Arrays.copyOfRange(args, 1, args.length);
+        switch (args[0]) {
+          case "gen":   genData(funcArgs); break;
+          case "test1": testStage1();      break;
+          case "test2": testStage2();      break;
+        }
     }
     
-    private static void genData(File uniDir, File triDir, File outDir)
+    private static void genData(String... args)
             throws Exception
     {
-        // Print input files.
-        System.out.println("Unigram files:");
-        printFiles(uniDir.listFiles());
-        System.out.println("Trigram files:");
-        printFiles(triDir.listFiles());
-        System.out.println("Output dir:\n\t" + outDir.getPath());
-        // Generate data for proposed approach.
-        // new gtm.test.stage1.DataGenerator().gen(uniDir, triDir, new File(outDir, "stage1"), "stage1");
-        // new gtm.test.stage2.DataGenerator().gen(uniDir, triDir, new File(outDir, "stage2"), "stage2");
-        // Generate data for string array approach.
-        new gtm.test.stage1.StringArrayApproach(uniDir, triDir).write(new File(outDir, "stringArray"));
+        if (args.length == 0 || args.length == 1 || args.length == 3) {
+            File uniDir = (args.length < 3 ? Constants.uniDir : new File(args[0]));
+            File triDir = (args.length < 3 ? Constants.triDir : new File(args[1]));
+            File outDir = (args.length == 0 ? new File("out"): (args.length < 3 ? new File(args[0]) : new File(args[2])));
+            // Print input files.
+            System.out.println("Unigram files:");
+            printFiles(uniDir.listFiles());
+            System.out.println("Trigram files:");
+            printFiles(triDir.listFiles());
+            System.out.println("Output dir:\n\t" + outDir.getPath());
+            // Generate data.
+            new gtm.test.stage1.DataGenerator().gen(uniDir, triDir, new File(outDir, "stage1"), "stage1");
+            new gtm.test.stage2.DataGenerator().gen(uniDir, triDir, new File(outDir, "stage2"), "stage2");
+        } else {
+            System.out.println("Generate data for testing.");
+            System.out.println("[Usage] gen [uniDir triDir] outDir");
+        }
     }
     
     private static void testStage1()

@@ -3,6 +3,7 @@ package gtm.test.stage2;
 import gnu.trove.map.hash.TObjectIntHashMap;
 import gtm.test.util.Pair;
 import gtm.test.util.Pairs;
+import gtm.test.util.Timer;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -34,23 +35,27 @@ public class Tester
     }
 
     @Override
-    public void test(Pairs pairs)
+    public double test(Pairs pairs)
     {
+        Timer.start();
         for (Pair pair : pairs)
             processor.sim(idMap.get(pair.word1), idMap.get(pair.word2));
+        Timer.end();
+        return Timer.interval();
     }
 
     @Override
-    public void testAndWrite(Pairs pairs, Writer out)
+    public double testAndWrite(Pairs pairs, Writer out)
             throws IOException
     {
-        try (
-            BufferedWriter bw = new BufferedWriter(out);
-        ){
+        Timer.start();
+        try (BufferedWriter bw = new BufferedWriter(out)){
             for (Pair pair : pairs) {
                 double sim = processor.sim(idMap.get(pair.word1), idMap.get(pair.word2));
                 bw.write(pair.word1 + "\t" + pair.word2 + "\t" + sim + "\n");
             }
         }
+        Timer.end();
+        return Timer.interval();
     }
 }

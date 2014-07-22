@@ -3,6 +3,7 @@ package gtm.test.stage1;
 import gtm.test.util.Measure;
 import gtm.test.util.Pair;
 import gtm.test.util.Pairs;
+import gtm.test.util.Timer;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -29,17 +30,21 @@ public class Tester
     }
 
     @Override
-    public void test(Pairs pairs)
+    public double test(Pairs pairs)
     {
+        Timer.start();
         for (Pair pair : pairs)
             measure.sim(approach.freq(pair.word1), approach.freq(pair.word2),
                     approach.freq(pair.word1, pair.word2));
+        Timer.end();
+        return Timer.interval();
     }
 
     @Override
-    public void testAndWrite(Pairs pairs, Writer out)
+    public double testAndWrite(Pairs pairs, Writer out)
             throws IOException
     {
+        Timer.start();
         try (BufferedWriter bw = new BufferedWriter(out)) {
             for (Pair pair : pairs)
                 bw.write(pair.word1 + "\t" + pair.word2 + "\t"
@@ -49,5 +54,7 @@ public class Tester
                                 approach.freq(pair.word1, pair.word2))
                         + "\n");
         }
+        Timer.end();
+        return Timer.interval();
     }
 }
