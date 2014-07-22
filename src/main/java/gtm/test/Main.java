@@ -23,7 +23,7 @@ public class Main
     public static void main(String[] args)
             throws Exception
     {
-        genData(Constants.uniDir, Constants.triDir, new File("./out"));
+        genData(new File(args[args.length - 1]), new File(args[args.length - 2]), new File(args[args.length - 3]));
         // testStage1();
         // testStage2();
     }

@@ -21,7 +21,5 @@
 **.swo
 
 # Large Corpus files #
-/orig*
-/out
 /etc
 /target
