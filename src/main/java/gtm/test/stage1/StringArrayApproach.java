@@ -15,6 +15,8 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import gtm.test.util.Timer;
+
 /**
  * String Array implementation of {@code Corpus}.
  * This class uses arrays to store the corpus data. The search algorithm uses binary search in
@@ -270,6 +272,8 @@ public class StringArrayApproach
     {
         return Long.parseLong(line.split("\t")[1]);
     }
+
+    private static final float GB = 1024 * 1024 * 1024;
     
     private static String[] read(File[] files)
             throws IOException
@@ -286,24 +290,30 @@ public class StringArrayApproach
         // Java only support array with 2^32 elements!
         int lines = 0;
         for (File file : files) {
-            System.out.print("[" + (count++) + "/" + total + "] read count form " + file.getName() + " ...\n");
+            System.out.print("[" + (count++) + "/" + total + "]\t read count form " + file.getName() + " ... ");
+            Timer.start();
             try (LineNumberReader lnr = new LineNumberReader(new FileReader(file))) {
                 while (lnr.read() != -1)
                     lnr.skip(Long.MAX_VALUE);
                 lines += lnr.getLineNumber();
             }
+            Timer.end();
+            System.out.println("Time taken: " + Timer.interval() + " s.\t (Memeory usage: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / GB + " GB)");
         }
         // Read contents into array.
         count = 0;
         String[] data = new String[lines];
         int curr = 0;
         for (File file : files) {
-            System.out.print("[" + (count++) + "/" + total + "] read content from " + file.getName() + " ...\n");
+            System.out.print("[" + (count++) + "/" + total + "]\t read content from " + file.getName() + " ... ");
+            Timer.start();
             try (BufferedReader br = new BufferedReader(new FileReader(file))) {
                 String line = null;
                 while ((line = br.readLine()) != null)
                     data[curr++] = line;
             }
+            Timer.end();
+            System.out.println("Time taken: " + Timer.interval() + " s.\t (Memeory usage: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / GB + " GB)");
         }
         return data;
     }

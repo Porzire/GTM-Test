@@ -23,3 +23,6 @@
 # Large Corpus files #
 /etc
 /target
+
+# Log files #
+**log**

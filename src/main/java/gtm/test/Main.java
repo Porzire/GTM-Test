@@ -3,11 +3,13 @@ package gtm.test;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.*;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.textsim.exception.ProcessException;
 
 import gtm.test.util.Constants;
@@ -15,15 +17,32 @@ import gtm.test.util.GTM;
 import gtm.test.util.Jaccard;
 import gtm.test.util.Measure;
 import gtm.test.util.Pairs;
+import gtm.test.util.Timer;
 
 public class Main
 {
     private static final int[] cases = {1000, 10000, 100000, 1000000, 10000000 };
+    private static final float GB = 1024 * 1024 * 1024;
 
     public static void main(String[] args)
             throws Exception
     {
-        genData(new File(args[args.length - 1]), new File(args[args.length - 2]), new File(args[args.length - 3]));
+        System.out.println("Test start.");
+        System.out.println("Arguments:");
+        for (String arg : args)
+            System.out.println("\t" + arg);
+
+        // genData(new File(args[args.length - 3]), new File(args[args.length - 2]), new File(args[args.length - 1]));
+
+        // System.out.println("Current memory taken: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / GB + " GB.");
+        // Timer.start();
+        // gtm.test.stage1.StringArrayApproach app = gtm.test.stage1.StringArrayApproach.read(new File(args[args.length - 1], "stringArray.ser"));
+        // Timer.end();
+        // System.out.println("Time taken: " + Timer.interval() + " s.");
+        // System.out.println("Current memory taken: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / GB + " GB.");
+
+        System.out.println("Test end.");
+
         // testStage1();
         // testStage2();
     }
@@ -37,11 +56,18 @@ public class Main
         System.out.println("Trigram files:");
         printFiles(triDir.listFiles());
         System.out.println("Output dir:\n\t" + outDir.getPath());
-        // Generate data for proposed approach.
+
+        // Generate data for proposed approach. DONE!
+        //
         // new gtm.test.stage1.DataGenerator().gen(uniDir, triDir, new File(outDir, "stage1"), "stage1");
         // new gtm.test.stage2.DataGenerator().gen(uniDir, triDir, new File(outDir, "stage2"), "stage2");
+
         // Generate data for string array approach.
-        new gtm.test.stage1.StringArrayApproach(uniDir, triDir).write(new File(outDir, "stringArray"));
+        // Slower than direct read. 
+        //
+        // if (!outDir.exists())
+        //     FileUtils.forceMkdir(outDir);
+        // new gtm.test.stage1.StringArrayApproach(uniDir, triDir).write(new File(outDir, "stringArray.ser"));
     }
     
     private static void testStage1()
