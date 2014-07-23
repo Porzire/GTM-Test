@@ -1,7 +1,7 @@
 package gtm.test.util;
 
 
-public class Simpon
+public class Simpson
         extends Measure
 {
     @Override

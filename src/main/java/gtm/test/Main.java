@@ -1,55 +1,61 @@
 package gtm.test;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.*;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
 import org.textsim.exception.ProcessException;
 
-import gtm.test.util.Constants;
+import gtm.test.util.Dice;
 import gtm.test.util.GTM;
 import gtm.test.util.Jaccard;
 import gtm.test.util.Measure;
+import gtm.test.util.NGD;
+import gtm.test.util.PMI;
 import gtm.test.util.Pairs;
-import gtm.test.util.Timer;
+import gtm.test.util.Simpson;
 
 public class Main
 {
-    private static final int[] cases = {1000, 10000, 100000, 1000000, 10000000 };
+    private static final int[] cases = {100000, 500000, 1000000, 5000000, 10000000, 15000000, 20000000, 25000000, 30000000, 35000000};
     private static final float GB = 1024 * 1024 * 1024;
 
     public static void main(String[] args)
             throws Exception
     {
-        System.out.println("Test start.");
+        File uniDir   = new File(args[args.length - 7]);
+        File triDir   = new File(args[args.length - 6]);
+        File s1Uni    = new File(args[args.length - 5]);
+        File s1Tri    = new File(args[args.length - 4]);
+        File s2Uni    = new File(args[args.length - 3]);
+        File s2Tri    = new File(args[args.length - 2]);
+        File pairFile = new File(args[args.length - 1]);
+
+        System.out.println("================================== Test start ==================================");
         System.out.println("Arguments:");
-        for (String arg : args)
-            System.out.println("\t" + arg);
+        System.out.println("\tRaw Unigram directory: " + uniDir.getPath());
+        System.out.println("\tRaw Trigram directory: " + triDir.getPath());
+        System.out.println("\tStage1 Unigram :       " + s1Uni.getPath());
+        System.out.println("\tStage1 Trigram :       " + s1Tri.getPath());
+        System.out.println("\tStage2 Unigram :       " + s2Uni.getPath());
+        System.out.println("\tStage2 Trigram :       " + s2Tri.getPath());
+        System.out.println("\tPair file:             " + pairFile.getPath());
 
-        // genData(new File(args[args.length - 3]), new File(args[args.length - 2]), new File(args[args.length - 1]));
+        // Test two stages.
+        testStage1(uniDir, triDir, s1Uni, s1Tri, pairFile);
+        testStage2(s2Uni, s2Tri, pairFile);
 
-        // System.out.println("Current memory taken: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / GB + " GB.");
-        // Timer.start();
-        // gtm.test.stage1.StringArrayApproach app = gtm.test.stage1.StringArrayApproach.read(new File(args[args.length - 1], "stringArray.ser"));
-        // Timer.end();
-        // System.out.println("Time taken: " + Timer.interval() + " s.");
-        // System.out.println("Current memory taken: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / GB + " GB.");
-
-        System.out.println("Test end.");
-
-        // testStage1();
-        // testStage2();
+        System.out.println("=================================== Test end ===================================");
     }
     
+    @SuppressWarnings("unused")
     private static void genData(File uniDir, File triDir, File outDir)
             throws Exception
     {
+        System.out.println("------------------------------- Data Generation --------------------------------");
         // Print input files.
         System.out.println("Unigram files:");
         printFiles(uniDir.listFiles());
@@ -57,77 +63,111 @@ public class Main
         printFiles(triDir.listFiles());
         System.out.println("Output dir:\n\t" + outDir.getPath());
 
-        // Generate data for proposed approach. DONE!
-        //
-        // new gtm.test.stage1.DataGenerator().gen(uniDir, triDir, new File(outDir, "stage1"), "stage1");
-        // new gtm.test.stage2.DataGenerator().gen(uniDir, triDir, new File(outDir, "stage2"), "stage2");
-
-        // Generate data for string array approach.
-        // Slower than direct read. 
-        //
-        // if (!outDir.exists())
-        //     FileUtils.forceMkdir(outDir);
-        // new gtm.test.stage1.StringArrayApproach(uniDir, triDir).write(new File(outDir, "stringArray.ser"));
-    }
-    
-    private static void testStage1()
-            throws IOException, ProcessException
-    {
-        System.out.print("Start testing...");
-        long initTime = System.currentTimeMillis();
-
-        gtm.test.stage1.ProposedApproach proposedApproach =
-                // new gtm.test.stage1.ProposedApproach(Constants.stage1Uni, Constants.stage1Tri);
-                new gtm.test.stage1.ProposedApproach(Constants.aresUni, Constants.aresTri);
-        gtm.test.stage1.Tester tester =
-                new gtm.test.stage1.Tester(proposedApproach);
+        // Generate data for proposed approach.
+        new gtm.test.stage1.DataGenerator().gen(uniDir, triDir, new File(outDir, "stage1"), "stage1");
+        new gtm.test.stage2.DataGenerator().gen(uniDir, triDir, new File(outDir, "stage2"), "stage2");
         
-        tester.setMeasure(new Jaccard())
-              .testAndWrite(new Pairs(Constants.pairs3), new FileWriter(new File(Constants.resourcesDir, "test1.jaccard")));
-        tester.setMeasure(new GTM(proposedApproach.cMax()))
-              .testAndWrite(new Pairs(Constants.pairs3), new FileWriter(new File(Constants.resourcesDir, "test1.gtm")));
-
-        long termTime = System.currentTimeMillis();
-        System.out.println("done! Time taken: " + (termTime - initTime) / 1000.0 + "s.");
     }
     
-    public static void testStage1(File pairFile)
+    private static void testStage1(
+            final File uniDir,
+            final File triDir,
+            final File preprocUni,
+            final File preprocTri,
+            final File pairFile)
             throws IOException, ProcessException
     {
-
-        System.out.println("Proposed Approach:\n");
-
-        gtm.test.stage1.ProposedApproach proposedApproach =
-                new gtm.test.stage1.ProposedApproach(Constants.stage1Uni, Constants.stage1Tri);
-        gtm.test.stage1.Tester tester =
-                new gtm.test.stage1.Tester(proposedApproach);
+        System.out.println("--------------------------------- Stage1 Test ----------------------------------");
+        
+        // Testing Requisites.
+        System.out.print("Prepare testing... \r");
+        List<Class<? extends gtm.test.stage1.Approach>> apps = Arrays.asList(
+                gtm.test.stage1.ProposedApproach.class,
+                // gtm.test.stage1.StringArrayApproach.class,
+                gtm.test.stage1.DirectAccessApproach.class
+        );
+        @SuppressWarnings("serial")
+        HashMap<String, Measure> measures = new HashMap<String, Measure>() {{
+                long cMax = new gtm.test.stage1.ProposedApproach(preprocUni, preprocTri).cMax();
+                put("Jaccard", new Jaccard());
+                put("Simpson", new Simpson());
+                put("Dice   ", new Dice());
+                put("PMI    ", new PMI(cMax));
+                put("NGD    ", new NGD(cMax));
+                put("GTM    ", new GTM(cMax));
+        }};
+        gtm.test.stage1.Tester tester = null;
+        gtm.test.stage1.Approach approach = null;
+        Runtime r = Runtime.getRuntime();
         Pairs pairs = new Pairs(pairFile);
-        
-        testStage1(tester, pairs, new Jaccard());
-        testStage1(tester, pairs, new GTM(proposedApproach.cMax()));
-    }
-    
-    public static void testStage1(gtm.test.stage1.Tester tester, Pairs pairs, Measure measure)
-    {
-        for (int c : cases)
-            System.out.print(tester.setMeasure(measure).test(pairs.subrange(c)) + "\t");
-        System.out.println();
+        float before, after;
+        System.out.print("                   \r");
+
+        // Test all the approaches.
+        for (Class<? extends gtm.test.stage1.Approach> app : apps) {
+            System.out.print(app.getSimpleName() + " Approach: Construct tester...\r");
+            if (app == gtm.test.stage1.ProposedApproach.class) {
+                approach = new gtm.test.stage1.ProposedApproach(preprocUni, preprocTri);
+//            } else if (app == gtm.test.stage1.StringArrayApproach.class) {
+//                approach = new gtm.test.stage1.StringArrayApproach(uniDir, triDir);
+//            } else if (app == gtm.test.stage1.DirectAccessApproach.class) {
+//                approach = new gtm.test.stage1.DirectAccessApproach(
+//                        new gtm.test.stage1.ProposedApproach(preprocUni, preprocTri));
+            }
+            tester = new gtm.test.stage1.Tester(approach);
+            // Test runtime time.
+            System.out.print("String Array Approach:                    \n\n\t");
+            for (int c : cases)
+                System.out.print(c + "\t");
+            System.out.println();
+            for (String name : measures.keySet()) {
+                System.out.print(name + "\t");
+                for (int c : cases) {
+                    r.gc();
+                    System.out.print(tester.setMeasure(measures.get(name)).test(pairs.subrange(c)) + "\t");
+                }
+                System.out.println();
+            }
+            // Test memory usage.
+            r.gc();
+            before = (r.totalMemory() - r.freeMemory()) / GB;
+            approach = null;
+            tester = null;
+            r.gc();
+            after = (r.totalMemory() - r.freeMemory()) / GB;
+            System.out.println("Memory usage: " + (before - after) + " GB\n");
+        }
     }
 
-    private static void testStage2()
+    private static void testStage2(
+            final File preprocUni,
+            final File preprocTri,
+            final File pairFile)
             throws IOException, ProcessException
     {
-        System.out.print("Start testing...");
-        long initTime = System.currentTimeMillis();
-
-        gtm.test.stage2.Tester tester =
-                // new gtm.test.stage2.Tester(Constants.stage2Uni, Constants.stage2Tri);
-                new gtm.test.stage2.Tester(Constants.aresUni, Constants.aresTri);
+        System.out.println("--------------------------------- Stage2 Test ----------------------------------");
         
-        tester.testAndWrite(new Pairs(Constants.pairs3), new FileWriter(new File(Constants.resourcesDir, "test2.gtm")));
-
-        long termTime = System.currentTimeMillis();
-        System.out.println("done! Time taken: " + (termTime - initTime) / 1000.0 + "s.");
+        // Testing Requisites.
+        gtm.test.stage2.Tester tester = new gtm.test.stage2.Tester(preprocUni, preprocTri);
+        Pairs pairs = new Pairs(pairFile);
+        Runtime r = Runtime.getRuntime();
+        float before, after;
+        // Test run time.
+        for (int c : cases)
+            System.out.print(c + "\t");
+        System.out.println();
+        for (int c : cases) {
+            r.gc();
+            System.out.print(tester.test(pairs.subrange(c)) + "\t");
+        }
+        System.out.println();
+        // Test memory usage.
+        r.gc();
+        before = (r.totalMemory() - r.freeMemory()) / GB;
+        tester = null;
+        r.gc();
+        after = (r.totalMemory() - r.freeMemory()) / GB;
+        System.out.println("Memory usage: " + (before - after) + " GB\n");
     }
     
     private static void printFiles(File... files)

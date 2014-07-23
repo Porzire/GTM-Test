@@ -6,7 +6,7 @@ import gtm.test.util.Jaccard;
 import gtm.test.util.Measure;
 import gtm.test.util.NGD;
 import gtm.test.util.PMI;
-import gtm.test.util.Simpon;
+import gtm.test.util.Simpson;
 
 import java.io.IOException;
 
@@ -39,7 +39,7 @@ public class Stage1Tester {
         if (simType.equals("Jacard"))
             sim = new Jaccard();
         else if (simType.equals("Simpson"))
-            sim = new Simpon();
+            sim = new Simpson();
         else if (simType.equals("Dice"))
             sim = new Dice();
         else if (simType.equals("PMI"))

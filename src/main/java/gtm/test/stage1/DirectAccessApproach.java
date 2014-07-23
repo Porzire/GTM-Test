@@ -20,12 +20,13 @@ public class DirectAccessApproach
      * The co-occurrence map size. Only SIZE x SIZE of the map is implemented
      * for the limitation of the memory.
      */
-    private static final int SIZE = 100000;
+    int size;
 
     private TObjectIntHashMap<String> idMap;
     long[] freqs;
     long[][] cooccurrence;
     long cMax;
+
 
     /**
      * Read object from serialized file.
@@ -46,14 +47,24 @@ public class DirectAccessApproach
         }
     }
 
+    public DirectAccessApproach(ProposedApproach proposed, int size)
+    {
+        this.size = size;
+        idMap = new TObjectIntHashMap<String>();
+        for (String gram : idMap.keySet())
+            idMap.put(gram, proposed.idMap.get(gram));
+        freqs = new long[proposed.freqs.length];
+        System.arraycopy(proposed.freqs, 0, freqs, 0, proposed.freqs.length);
+        cMax = proposed.cMax;
+        cooccurrence = new long[size][size];
+        for (int i = 1; i < size; i++)
+            for (int j = 1; j < size; j++)
+                cooccurrence[i][j] = proposed.freq(i, j);
+    }
+    
     public DirectAccessApproach(ProposedApproach proposed)
     {
-        idMap = proposed.idMap;
-        freqs = proposed.freqs;
-        cMax = proposed.cMax;
-        for (int i = 0; i <= SIZE; i++)
-            for (int j = 0; j <= SIZE; j++)
-                cooccurrence[i][j] = proposed.freq(idMap.get(i), idMap.get(j));
+        this(proposed, 100000);
     }
 
     @Override
@@ -63,7 +74,12 @@ public class DirectAccessApproach
 
     @Override
     public long freq(String gram1, String gram2) {
-        return cooccurrence[idMap.get(gram1)][idMap.get(gram2)];
+        int id1 = idMap.get(gram1);
+        int id2 = idMap.get(gram2);
+        if (id1 >= size || id2 >= size)
+            return 1;  // Force computation!
+        else
+            return cooccurrence[id1][id2];
     }
 
     @Override
