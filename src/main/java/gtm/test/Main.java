@@ -20,7 +20,8 @@ import gtm.test.util.Simpson;
 
 public class Main
 {
-    private static final int[] cases = {100000, 500000, 1000000, 5000000, 10000000, 15000000, 20000000, 25000000, 30000000, 35000000};
+//    private static final int[] cases = {100000, 500000, 1000000, 5000000, 10000000, 15000000, 20000000, 25000000, 30000000, 35000000};
+    private static final int[] cases = {100, 200, 300, 400, 500, 600, 700, 800, 900, 1000};
     private static final float GB = 1024 * 1024 * 1024;
 
     public static void main(String[] args)
@@ -83,7 +84,7 @@ public class Main
         System.out.print("Prepare testing... \r");
         List<Class<? extends gtm.test.stage1.Approach>> apps = Arrays.asList(
                 gtm.test.stage1.ProposedApproach.class,
-                // gtm.test.stage1.StringArrayApproach.class,
+                gtm.test.stage1.StringArrayApproach.class,
                 gtm.test.stage1.DirectAccessApproach.class
         );
         @SuppressWarnings("serial")
@@ -105,18 +106,20 @@ public class Main
 
         // Test all the approaches.
         for (Class<? extends gtm.test.stage1.Approach> app : apps) {
-            System.out.print(app.getSimpleName() + " Approach: Construct tester...\r");
+            System.out.print(app.getSimpleName() + ": Construct tester...\r");
             if (app == gtm.test.stage1.ProposedApproach.class) {
-                approach = new gtm.test.stage1.ProposedApproach(preprocUni, preprocTri);
-//            } else if (app == gtm.test.stage1.StringArrayApproach.class) {
-//                approach = new gtm.test.stage1.StringArrayApproach(uniDir, triDir);
-//            } else if (app == gtm.test.stage1.DirectAccessApproach.class) {
-//                approach = new gtm.test.stage1.DirectAccessApproach(
-//                        new gtm.test.stage1.ProposedApproach(preprocUni, preprocTri));
+                continue;
+                // approach = new gtm.test.stage1.ProposedApproach(preprocUni, preprocTri);
+            } else if (app == gtm.test.stage1.StringArrayApproach.class) {
+                approach = new gtm.test.stage1.StringArrayApproach(uniDir, triDir);
+            } else if (app == gtm.test.stage1.DirectAccessApproach.class) {
+                continue;
+                // approach = new gtm.test.stage1.DirectAccessApproach(
+                //         new gtm.test.stage1.ProposedApproach(preprocUni, preprocTri));
             }
             tester = new gtm.test.stage1.Tester(approach);
             // Test runtime time.
-            System.out.print("String Array Approach:                    \n\n\t");
+            System.out.print(app.getSimpleName() + ":                    \n\n\t");
             for (int c : cases)
                 System.out.print(c + "\t");
             System.out.println();
