@@ -20,7 +20,23 @@ import gtm.test.util.Simpson;
 
 public class Main
 {
-    private static final int[] cases = {100000, 500000, 1000000, 5000000, 10000000, 15000000, 20000000, 25000000, 30000000, 35000000};
+    // Whether stage will be test.
+    private static final boolean TEST_STAGE1 = true;
+    private static final boolean TEST_STAGE2 = false;
+    // Cases used for each test.
+    private static final int[] TEST_CASES = {
+            100000, 500000, 1000000, 5000000, 10000000, 15000000, 20000000, 25000000, 30000000, 35000000
+    };
+    // Test 1 approaches.
+    private static final List<Class<? extends gtm.test.stage1.Approach>> STAGE1_APPROACHES = Arrays.asList(
+            gtm.test.stage1.ProposedApproach.class,
+//            gtm.test.stage1.StringArrayApproach.class,
+//            gtm.test.stage1.DirectAccessApproach.class,
+            gtm.test.stage1.ConcatApproach.class,
+            gtm.test.stage1.NestedHashApproach.class
+    );
+
+    // Constants Definition.
     private static final float GB = 1024 * 1024 * 1024;
 
     public static void main(String[] args)
@@ -43,10 +59,13 @@ public class Main
         System.out.println("\tStage2 Unigram :       " + s2Uni.getPath());
         System.out.println("\tStage2 Trigram :       " + s2Tri.getPath());
         System.out.println("\tPair file:             " + pairFile.getPath());
+        System.out.println();
 
         // Test two stages.
-        testStage1(uniDir, triDir, s1Uni, s1Tri, pairFile);
-        testStage2(s2Uni, s2Tri, pairFile);
+        if (TEST_STAGE1)
+            testStage1(uniDir, triDir, s1Uni, s1Tri, pairFile);
+        if (TEST_STAGE2)
+            testStage2(s2Uni, s2Tri, pairFile);
 
         System.out.println("=================================== Test end ===================================");
     }
@@ -81,11 +100,6 @@ public class Main
         
         // Testing Requisites.
         System.out.print("Prepare testing... \r");
-        List<Class<? extends gtm.test.stage1.Approach>> apps = Arrays.asList(
-                gtm.test.stage1.ProposedApproach.class,
-                // gtm.test.stage1.StringArrayApproach.class,
-                gtm.test.stage1.DirectAccessApproach.class
-        );
         @SuppressWarnings("serial")
         HashMap<String, Measure> measures = new HashMap<String, Measure>() {{
                 long cMax = new gtm.test.stage1.ProposedApproach(preprocUni, preprocTri).cMax();
@@ -104,25 +118,25 @@ public class Main
         System.out.print("                   \r");
 
         // Test all the approaches.
-        for (Class<? extends gtm.test.stage1.Approach> app : apps) {
+        for (Class<? extends gtm.test.stage1.Approach> app : STAGE1_APPROACHES) {
             System.out.print(app.getSimpleName() + " Approach: Construct tester...\r");
             if (app == gtm.test.stage1.ProposedApproach.class) {
                 approach = new gtm.test.stage1.ProposedApproach(preprocUni, preprocTri);
-//            } else if (app == gtm.test.stage1.StringArrayApproach.class) {
-//                approach = new gtm.test.stage1.StringArrayApproach(uniDir, triDir);
-//            } else if (app == gtm.test.stage1.DirectAccessApproach.class) {
-//                approach = new gtm.test.stage1.DirectAccessApproach(
-//                        new gtm.test.stage1.ProposedApproach(preprocUni, preprocTri));
+            } else if (app == gtm.test.stage1.StringArrayApproach.class) {
+                approach = new gtm.test.stage1.StringArrayApproach(uniDir, triDir);
+            } else if (app == gtm.test.stage1.DirectAccessApproach.class) {
+                approach = new gtm.test.stage1.DirectAccessApproach(
+                        new gtm.test.stage1.ProposedApproach(preprocUni, preprocTri));
             }
             tester = new gtm.test.stage1.Tester(approach);
             // Test runtime time.
             System.out.print("String Array Approach:                    \n\n\t");
-            for (int c : cases)
+            for (int c : TEST_CASES)
                 System.out.print(c + "\t");
             System.out.println();
             for (String name : measures.keySet()) {
                 System.out.print(name + "\t");
-                for (int c : cases) {
+                for (int c : TEST_CASES) {
                     r.gc();
                     System.out.print(tester.setMeasure(measures.get(name)).test(pairs.subrange(c)) + "\t");
                 }
@@ -153,10 +167,10 @@ public class Main
         Runtime r = Runtime.getRuntime();
         float before, after;
         // Test run time.
-        for (int c : cases)
+        for (int c : TEST_CASES)
             System.out.print(c + "\t");
         System.out.println();
-        for (int c : cases) {
+        for (int c : TEST_CASES) {
             r.gc();
             System.out.print(tester.test(pairs.subrange(c)) + "\t");
         }
