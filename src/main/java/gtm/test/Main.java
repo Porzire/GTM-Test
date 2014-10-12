@@ -100,14 +100,6 @@ public class Main
         
         // Testing Requisites.
         System.out.print("Prepare testing... \r");
-<<<<<<< HEAD
-=======
-        List<Class<? extends gtm.test.stage1.Approach>> apps = Arrays.asList(
-                gtm.test.stage1.ProposedApproach.class,
-                gtm.test.stage1.StringArrayApproach.class,
-                gtm.test.stage1.DirectAccessApproach.class
-        );
->>>>>>> 5cac75b5e983f5f90dadd8f0c09af62b3ebc9fa1
         @SuppressWarnings("serial")
         HashMap<String, Measure> measures = new HashMap<String, Measure>() {{
                 long cMax = new gtm.test.stage1.ProposedApproach(preprocUni, preprocTri).cMax();
@@ -126,7 +118,6 @@ public class Main
         System.out.print("                   \r");
 
         // Test all the approaches.
-<<<<<<< HEAD
         for (Class<? extends gtm.test.stage1.Approach> app : STAGE1_APPROACHES) {
             System.out.print(app.getSimpleName() + " Approach: Construct tester...\r");
             if (app == gtm.test.stage1.ProposedApproach.class) {
@@ -141,24 +132,6 @@ public class Main
             // Test runtime time.
             System.out.print("String Array Approach:                    \n\n\t");
             for (int c : TEST_CASES)
-=======
-        for (Class<? extends gtm.test.stage1.Approach> app : apps) {
-            System.out.print(app.getSimpleName() + ": Construct tester...\r");
-            if (app == gtm.test.stage1.ProposedApproach.class) {
-                continue;
-                // approach = new gtm.test.stage1.ProposedApproach(preprocUni, preprocTri);
-            } else if (app == gtm.test.stage1.StringArrayApproach.class) {
-                approach = new gtm.test.stage1.StringArrayApproach(uniDir, triDir);
-            } else if (app == gtm.test.stage1.DirectAccessApproach.class) {
-                continue;
-                // approach = new gtm.test.stage1.DirectAccessApproach(
-                //         new gtm.test.stage1.ProposedApproach(preprocUni, preprocTri));
-            }
-            tester = new gtm.test.stage1.Tester(approach);
-            // Test runtime time.
-            System.out.print(app.getSimpleName() + ":                    \n\n\t");
-            for (int c : cases)
->>>>>>> 5cac75b5e983f5f90dadd8f0c09af62b3ebc9fa1
                 System.out.print(c + "\t");
             System.out.println();
             for (String name : measures.keySet()) {
