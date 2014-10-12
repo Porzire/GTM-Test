@@ -130,7 +130,7 @@ public class Main
             }
             tester = new gtm.test.stage1.Tester(approach);
             // Test runtime time.
-            System.out.print("String Array Approach:                    \n\n\t");
+            System.out.print(app.getSimpleName() + " Approach:                                        \n\n\t");
             for (int c : TEST_CASES)
                 System.out.print(c + "\t");
             System.out.println();
