@@ -25,19 +25,18 @@ public class ConcatApproach
         cMax = pa.cMax;
         idMap = pa.idMap;
         freqs = pa.freqs;
-        Set<String> keys = idMap.keySet();
-        coocMap = new TLongLongHashMap((int)(keys.size() * keys.size() * 0.01));
-        int i = 0;
-        for (String key1 : keys) {
-            for (String key2 : keys) {
-                int id1 = idMap.get(key1);
-                int id2 = idMap.get(key2);
-                long count = pa.freq(id1, id2);
-                if (count > 0) {
-                    coocMap.put(encode(id1, id2), count);
-                }
-            }
-            System.out.print("[" + ++i + "/" + keys.size() + "\r");
+        int size = idMap.keySet().size();
+        coocMap = new TLongLongHashMap((int)(size * size * 0.01));
+        long starTime = System.currentTimeMillis();
+        for (int id1 = 0; id1 < size; id1++) {
+            int str = pa.tListStr[id1];
+            int end = pa.tListEnd[id1];
+            for (int id2 = str; id2 < end; id2++)
+                coocMap.put(encode(id1, id2), pa.freq(id1, id2));
+            if (id1 % 1000 == 0)
+                System.out.print("[" + id1 + "/" + size + "] " +
+                        new java.text.DecimalFormat("#.##").format((float)id1/size*100) + "% done " + coocMap.size() + " entries added. Time taken " +
+                        (System.currentTimeMillis() - starTime) / 1000 + " s        \r");
         }
     }
     

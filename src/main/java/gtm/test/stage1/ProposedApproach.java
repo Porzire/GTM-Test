@@ -19,16 +19,16 @@ public class ProposedApproach
     protected TObjectIntHashMap<String> idMap;
     protected long[] freqs;
     // Trigram Data structure.
-    private int[]     tListStr;  // The start index of trigram sublist (inclusive)
-    private int[]     tListEnd;  // The end index of trigram sublist (exclusive)
-    private int[]     tListID;   // The ID of the third word in trigram
-    private double[]  rt;        // The word relatedness of the trigram
-    private int       uNum;      // The number of unigrams.
-                                 // This variable is the length when construct tListStr and tListEnd.
-                                 // Therefore the index of the arrays represents the ID of the unigram.
-    private int       tNum;      // The number of unordered trigram pairs
-                                 // This variable is the length when construct rt and tListID.
-                                 // The index can be looked up in the tListStr and tListEnd.
+    protected int[]     tListStr;  // The start index of trigram sublist (inclusive)
+    protected int[]     tListEnd;  // The end index of trigram sublist (exclusive)
+    protected int[]     tListID;   // The ID of the third word in trigram
+    protected double[]  rt;        // The word relatedness of the trigram
+    protected int       uNum;      // The number of unigrams.
+                                   // This variable is the length when construct tListStr and tListEnd.
+                                   // Therefore the index of the arrays represents the ID of the unigram.
+    protected int       tNum;      // The number of unordered trigram pairs
+                                   // This variable is the length when construct rt and tListID.
+                                   // The index can be looked up in the tListStr and tListEnd.
 
     /**
      * Construct the object with pre-processed binary trigram file.
@@ -110,8 +110,6 @@ public class ProposedApproach
     {
         if (id1 > id2) {
             int temp = id1; id1 = id2; id2 = temp;
-        } else if (id1 == id2) {
-            return 1;
         }
         // Binary search
         int indStr = tListStr[id1],
@@ -120,7 +118,7 @@ public class ProposedApproach
         while (indStr <= indEnd) {
         	indMid = (indStr + indEnd) / 2;
         	if (tListID[indMid] == id2) {
-            	return (long)rt[indMid];
+            	return (long)(rt[indMid] * 1000000);
         	}
             else if (tListID[indMid] > id2)
                 indEnd = indMid - 1;
