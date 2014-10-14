@@ -26,7 +26,9 @@ public class ConcatApproach
         idMap = pa.idMap;
         freqs = pa.freqs;
         Set<String> keys = idMap.keySet();
-        for (String key1 : keys)
+        coocMap = new TLongLongHashMap((int)(keys.size() * keys.size() * 0.01));
+        int i = 0;
+        for (String key1 : keys) {
             for (String key2 : keys) {
                 int id1 = idMap.get(key1);
                 int id2 = idMap.get(key2);
@@ -35,6 +37,8 @@ public class ConcatApproach
                     coocMap.put(encode(id1, id2), count);
                 }
             }
+            System.out.print("[" + ++i + "/" + keys.size() + "\r");
+        }
     }
     
     private long encode(int a, int b) {

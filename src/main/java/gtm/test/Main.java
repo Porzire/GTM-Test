@@ -20,13 +20,14 @@ import gtm.test.util.Simpson;
 
 public class Main
 {
+    private static final boolean DEBUG = true;
     // Whether stage will be test.
     private static final boolean TEST_STAGE1 = true;
     private static final boolean TEST_STAGE2 = false;
     // Cases used for each test.
-    private static final int[] TEST_CASES = {
-            100000, 500000, 1000000, 5000000, 10000000, 15000000, 20000000, 25000000, 30000000, 35000000
-    };
+    private static final int[] TEST_CASES = DEBUG
+            ? new int[]{100}
+            : new int[]{100000, 500000, 1000000, 5000000, 10000000, 15000000, 20000000, 25000000, 30000000, 35000000};
     // Test 1 approaches.
     private static final List<Class<? extends gtm.test.stage1.Approach>> STAGE1_APPROACHES = Arrays.asList(
             gtm.test.stage1.ProposedApproach.class,
@@ -51,6 +52,7 @@ public class Main
         File pairFile = new File(args[args.length - 1]);
 
         System.out.println("================================== Test start ==================================");
+        System.out.println();
         System.out.println("Arguments:");
         System.out.println("\tRaw Unigram directory: " + uniDir.getPath());
         System.out.println("\tRaw Trigram directory: " + triDir.getPath());
@@ -59,6 +61,12 @@ public class Main
         System.out.println("\tStage2 Unigram :       " + s2Uni.getPath());
         System.out.println("\tStage2 Trigram :       " + s2Tri.getPath());
         System.out.println("\tPair file:             " + pairFile.getPath());
+        System.out.println();
+        if (TEST_STAGE1) {
+            System.out.println("Stage 1 Approaches:");
+            for (Class<? extends gtm.test.stage1.Approach> app : STAGE1_APPROACHES)
+                System.out.println('\t' + app.getSimpleName());
+        }
         System.out.println();
 
         // Test two stages.
@@ -97,6 +105,7 @@ public class Main
             throws IOException, ProcessException
     {
         System.out.println("--------------------------------- Stage1 Test ----------------------------------");
+        System.out.println();
         
         // Testing Requisites.
         System.out.print("Prepare testing... \r");
@@ -116,6 +125,7 @@ public class Main
         Pairs pairs = new Pairs(pairFile);
         float before, after;
         System.out.print("                   \r");
+        System.out.print("                   \r");
 
         // Test all the approaches.
         for (Class<? extends gtm.test.stage1.Approach> app : STAGE1_APPROACHES) {
@@ -127,6 +137,10 @@ public class Main
             } else if (app == gtm.test.stage1.DirectAccessApproach.class) {
                 approach = new gtm.test.stage1.DirectAccessApproach(
                         new gtm.test.stage1.ProposedApproach(preprocUni, preprocTri));
+            } else if (app == gtm.test.stage1.ConcatApproach.class) {
+                approach = new gtm.test.stage1.ConcatApproach(preprocUni, preprocTri);
+            } else if (app == gtm.test.stage1.NestedHashApproach.class) {
+                approach = new gtm.test.stage1.NestedHashApproach(preprocUni, preprocTri);
             }
             tester = new gtm.test.stage1.Tester(approach);
             // Test runtime time.
@@ -137,17 +151,17 @@ public class Main
             for (String name : measures.keySet()) {
                 System.out.print(name + "\t");
                 for (int c : TEST_CASES) {
-                    r.gc();
+                    gc();
                     System.out.print(tester.setMeasure(measures.get(name)).test(pairs.subrange(c)) + "\t");
                 }
                 System.out.println();
             }
             // Test memory usage.
-            r.gc();
+            gc();
             before = (r.totalMemory() - r.freeMemory()) / GB;
             approach = null;
             tester = null;
-            r.gc();
+            gc();
             after = (r.totalMemory() - r.freeMemory()) / GB;
             System.out.println("Memory usage: " + (before - after) + " GB\n");
         }
@@ -171,15 +185,15 @@ public class Main
             System.out.print(c + "\t");
         System.out.println();
         for (int c : TEST_CASES) {
-            r.gc();
+            gc();
             System.out.print(tester.test(pairs.subrange(c)) + "\t");
         }
         System.out.println();
         // Test memory usage.
-        r.gc();
+        gc();
         before = (r.totalMemory() - r.freeMemory()) / GB;
         tester = null;
-        r.gc();
+        gc();
         after = (r.totalMemory() - r.freeMemory()) / GB;
         System.out.println("Memory usage: " + (before - after) + " GB\n");
     }
@@ -198,5 +212,10 @@ public class Main
         });
         for (File file : files)
             System.out.println("\t" + file.getPath());
+    }
+
+    private static void gc() {
+        if (!DEBUG)
+            Runtime.getRuntime().gc();
     }
 }
